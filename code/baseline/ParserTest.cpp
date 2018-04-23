@@ -6,7 +6,7 @@
 template<size_t N>
 auto makeData(const char (&v)[N]) {
     auto p = reinterpret_cast<const Byte *>(&v[0]);
-    return DataView{p, p + N - 1};
+    return MemoryView{p, p + N - 1};
 }
 
 template<size_t IN, size_t CP>

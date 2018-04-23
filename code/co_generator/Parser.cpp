@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-auto utf8Decode(DataView data) -> Generator<FileChar> {
+auto utf8Decode(MemoryView data) -> Generator<FileChar> {
     auto hasData = [&](size_t bytes = 1) {
         return data.begin + bytes <= data.end;
     };

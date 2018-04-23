@@ -9,14 +9,14 @@
 using Byte = uint8_t;
 using StringView = std::string_view;
 
-struct DataView {
+struct MemoryView {
     const Byte *begin;
     const Byte *end;
 };
 
 struct FileContent {
     StringView name;
-    DataView content;
+    MemoryView content;
 };
 
 using CodePoint = uint32_t;
@@ -26,7 +26,7 @@ struct FileChar {
     const Byte *ptr;
 };
 
-auto utf8Decode(DataView data) -> Generator<FileChar>;
+auto utf8Decode(MemoryView data) -> Generator<FileChar>;
 
 // output
 

@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-auto utf8Decode(DataView data) -> Generator<FileChar> {
+auto utf8Decode(MemoryView data) -> Generator<FileChar> {
     struct Utf8Decoder {
         operator bool() const {
             return data.begin < data.end;
@@ -58,9 +58,9 @@ auto utf8Decode(DataView data) -> Generator<FileChar> {
             return chr({});
         }
 
-        DataView data;
+        MemoryView data;
     };
-    return Generator<FileChar>(Utf8Decoder{data});
+    return Utf8Decoder{data};
 }
 
 #define TAB_WIDTH 4u
