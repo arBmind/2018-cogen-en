@@ -1,0 +1,30 @@
+@page
+  size $slide-width $slide-height
+  margin 0
+
+@media print
+  .bespoke-parent, .bespoke-scale-parent, .bespoke-slide
+    margin unset
+    position relative
+    top unset
+    right unset
+    bottom unset
+    left unset
+
+  .bespoke-parent
+    overflow visible
+
+  .bespoke-scale-parent
+    transform unset !important
+
+  .bespoke-slide
+    opacity unset
+    zoom unset !important
+    // page break should be implied, but sometimes is necessary
+    page-break-after always
+    // enable this next property to see where you're getting overflows
+    //overflow visible
+
+  .bespoke-bullet-inactive
+    opacity unset
+    visibility visible

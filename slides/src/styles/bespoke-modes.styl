@@ -1,0 +1,10 @@
+.bespoke-overview
+  -ms-overflow-style none // NOTE hide visible scrollbar in IE 10+
+  &::-webkit-scrollbar { width: 0 } // NOTE hide visible scrollbar in WebKit
+  .bespoke-active
+    outline-color $color-accent
+  // FIXME the built-in rule in bespoke-overview is being overrridden
+  .bespoke-bullet
+    opacity 1 !important
+  & > footer, .bespoke-progress-parent { display: none }
+  &-to .bespoke-slide, &-from .bespoke-slide { transition: none }

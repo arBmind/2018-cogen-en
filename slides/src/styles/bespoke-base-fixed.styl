@@ -1,0 +1,107 @@
+.deck
+  overflow hidden
+  background-color $color-surface
+  font-family $font-family-base
+  font-size $font-size-base
+  color $color-text
+  font-feature-settings "kern" 1
+  text-rendering optimizeLegibility
+  -webkit-font-smoothing antialiased
+  -moz-osx-font-smoothing grayscale
+  // NOTE hide deck and slide content until Bespoke.js classes have been added
+  &:not(.bespoke-parent), section:not(.bespoke-slide) { display: none }
+
+.bespoke-parent, .bespoke-scale-parent
+  position absolute
+  top 0
+  right 0
+  bottom 0
+  left 0
+
+.bespoke-scale-parent, .bespoke-slide, .bespoke-slide-canvas
+  pointer-events none
+
+.bespoke-slide
+  overflow hidden
+  opacity 0 // NOTE force opacity to start at 0 to avoid transition on load when using bespoke-scale
+  background-color $color-canvas
+  position absolute
+  top 50%
+  left 50%
+  width $slide-width
+  margin-left -(@width / 2)
+  height $slide-height
+  margin-top -(@height / 2)
+  padding $slide-padding
+  display flex
+  align-items center
+  justify-content center
+  flex-direction column
+  transition $slide-transition
+
+.bespoke-active
+  pointer-events auto
+  opacity 1
+  z-index 1 // NOTE Webkit requires z-index to be 1 for elements to receive focus (may no longer apply)
+  &.no-transition { transition: none }
+
+.bespoke-bullet-inactive
+  visibility hidden
+
+.fade .bespoke-bullet-active:not(.bespoke-bullet-current)
+  opacity 0.1
+
+.vanish  .bespoke-bullet-active:not(.bespoke-bullet-current)
+  opacity 0
+
+.bespoke-progress-parent {
+  position absolute
+  height .1em
+  left 0
+  right 0
+  bottom 0
+}
+
+.bespoke-progress-bar {
+  -webkit-transition width $progress-transition-time ease
+  -moz-transition width $progress-transition-time ease
+  -ms-transition width $progress-transition-time ease
+  -o-transition width $progress-transition-time ease
+  transition width $progress-transition-time ease
+  position absolute
+  z-index 1
+  height 100%
+  background $progress-color
+}
+
+.bespoke-slidenumber {
+  position absolute
+  bottom 0
+  right 0
+  font-size 18pt
+  color #888
+}
+.bespoke-slidenumber-current {
+  padding: 0 5px;
+  float: left;
+}
+.bespoke-slidenumber-divider {
+  float: left;
+}
+.bespoke-slidenumber-overall {
+  padding: 0 5px;
+  float: left;
+  /* border-left: 4px solid #000 */
+}
+
+/* for transitioning to blackout */
+.bespoke-blackout .bespoke-blackout-overlay {
+  -webkit-transition: opacity 0.5s ease-in;
+          transition: opacity 0.5s ease-in;
+}
+
+/* for transitioning from blackout */
+.bespoke-blackout-overlay {
+  -webkit-transition: opacity 0.5s ease-in, visibility 0s linear 0.5s;
+          transition: opacity 0.5s ease-in, visibility 0s linear 0.5s;
+}

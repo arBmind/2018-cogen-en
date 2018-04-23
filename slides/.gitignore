@@ -1,0 +1,4 @@
+/.bundle/gems/
+/Gemfile.lock
+/node_modules/
+/public/

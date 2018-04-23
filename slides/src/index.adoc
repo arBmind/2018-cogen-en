@@ -1,0 +1,549 @@
+= Einführung & Praxisreport: Coroutinen als Generatoren
+:title: Einführung & Praxisreport: CoRoutinen als Generatoren
+:author: Andreas Reischuck
+:!twitter: @arBmind
+:!avatar: andreas.png
+:!organization: HicknHack Software GmbH
+:!sectids:
+:imagesdir: images
+:icons: font
+:use-link-attrs:
+:title-separator: :
+:codedir: code
+
+*ADC++ 2018*
+
+[.cue]
+****
+Willkommen
+****
+
+== CoRoutinen ?
+
+[%build]
+* ausprobiert?
+* Aufgaben implementiert?
+
+[.cue]
+****
+Publikum fragen
+****
+
+== CoRoutine
+
+[%build]
+* Funktion
+* mit Unterbrechungen
+
+[.cue]
+****
+* Ist eine generalisierte
+****
+
+== !
+
+[.cue]
+****
+* Fragen?
+* Dann…
+****
+
+[.title]
+== Generatoren ?
+
+[.cue]
+****
+Publikum fragen
+****
+
+[.source]
+== Beispiel
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/array/main.cpp[tag=slide]
+----
+--
+
+[.cue]
+****
+* Generator?
+****
+
+[.source]
+== Co-Routine Generator
+
+[%build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/cogen/main.cpp[tag=23_42]
+----
+--
+
+[.source]
+== Iota Generator
+
+[.build.build-items]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/cogen/main.cpp[tag=iota]
+----
+--
+
+[.cue]
+****
+* Alle Zahlen von 0 bis n-1
+****
+
+[.source]
+== Endloser Generator
+
+[.build.build-items]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/cogen/main.cpp[tag=from]
+----
+--
+
+[.cue]
+****
+* Alle Zahlen ab n
+****
+
+== [language-cpp]#`Generator<T>`# & [language-cpp]#`co_yield`#
+
+[.cue]
+****
+* Was ist neu
+****
+
+== Generatoren ohne Co-Routinen
+
+[%fit%build]
+* [language-cpp]#`begin()`# & [language-cpp]#`end()`#
+* Input Iterator
+* Interner Zustand
+
+[.source]
+== !From Generator
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/from_gen/main.cpp[tag=gen]
+----
+--
+
+[.cue]
+****
+* C++17 erlaubt unterschiedliche Iteratoren
+****
+
+[.source]
+== !From Iter
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/from_gen/main.cpp[tag=iter]
+----
+--
+
+[.cue]
+****
+* Eigentliche Logik
+* Zustand
+* In Praxis noch einiges mehr
+****
+
+== Probleme?
+
+[%fit%build]
+* Logik
+* State
+* State-Machine
+
+[.cue]
+****
+* … in realem Code schwer zu managen
+* nicht optimierbar
+****
+
+== !Reasoning
+
+[.cue]
+****
+* Co-Routinen erlauben uns das besser aufzuschreiben
+* Analog `if`-`goto` vs. `switch`, Funktor vs. Lambda
+* Nur ein Generator
+****
+
+[.title]
+== Wie funktioniert [language-cpp]#`co_yield`#?
+
+[.source]
+== !CoRoutine Trait
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/cogen/main.cpp[tag=fun]
+
+include::{codedir}/cogen/main.cpp[tag=trait]
+----
+--
+
+[.cue]
+****
+* co_yield im Body
+* coroutine_traits mit Argument-Typen
+* promise_type
+****
+
+[.source]
+== !CoRoutine Includes
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/cogen/main.cpp[tag=include]
+----
+--
+
+[.cue]
+****
+* Jetzt kommt etwas code
+* Durchatmen!
+****
+
+[.source]
+== !Promise Suspend
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/cogen/main.cpp[tag=promise]
+include::{codedir}/cogen/main.cpp[tag=suspend]
+  // nest++
+  // …
+  // nest--
+};
+----
+--
+
+[.source]
+== !Promise Yield
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/cogen/main.cpp[tag=promise]
+  // …
+include::{codedir}/cogen/main.cpp[tag=yield]
+  // nest++
+  // …
+  // nest--
+};
+----
+--
+
+[.cue]
+****
+* was passiert bei co_yield
+****
+
+[.source]
+== !Promise Return
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/cogen/main.cpp[tag=promise]
+  // …
+include::{codedir}/cogen/main.cpp[tag=return]
+};
+----
+--
+
+[.source]
+== !Generator LifeCycle
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/cogen/main.cpp[tag=generator]
+include::{codedir}/cogen/main.cpp[tag=lifecycle]
+};
+----
+--
+
+[.source]
+== !Generator Work
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/cogen/main.cpp[tag=generator]
+include::{codedir}/cogen/main.cpp[tag=work]
+----
+--
+
+== Zusammenfassung
+
+[%fit%build]
+* [language-cpp]#`coroutine_traits<Ret, Args\...>`#
+* [language-cpp]#`promise_type`#
+* [language-cpp]#`coroutine_handle<Promise>`#
+
+[.cue]
+****
+* `co_yield` -> compiler sucht den `promise_type`
+* `promise_type` steuert Co-Routine
+* `coroutine_handle` steuert State-Machine
+****
+
+[.title]
+== Praxis
+
+[%fit%build]
+* Schreibe einen Tokenizer für Python.
+
+== Design
+
+[%fit%build]
+* UTF8 kodierter Text
+* => Unicode Codepoints
+* => Tokens
+* => AST
+
+[.source]
+== UTF8 Decode
+
+[%build]
+--
+[source.lang-cpp%nested, cpp]
+----
+auto utf8Decode(MemoryView)
+// nest++
+    -> Generator<Codepoint>;
+// nest--
+----
+--
+
+[.cue]
+****
+* Ist das eine Co-Routine?
+****
+
+[.source]
+== !Ohne CoRoutinen
+
+[%build]
+--
+[source.lang-cpp%nested, cpp]
+----
+auto utf8Decode(MemoryView view)
+    -> Generator<CodePoint> {
+  // nest++
+  struct Decoder {
+    // nest++
+    MemoryView view;
+    // nest--
+    // nest++
+    operator bool() const noexcept {
+      // nest++
+      return !view.empty();
+      // nest--
+    }
+    // nest--
+    // nest++
+    auto next() -> Codepoint { /*…*/ }
+    // nest--
+  };
+  return Decoder{view};
+  // nest--
+}
+----
+--
+
+[.source]
+== Als Co-Routine
+
+[%build]
+--
+[source.lang-cpp%nested, cpp]
+----
+auto utf8Decode(MemoryView view)
+    -> Generator<CodePoint> {
+  // nest++
+  while (!view.empty()) {
+    // nest++
+    /* … */
+    // nest--
+    // nest++
+    co_yield /* … */;
+    // nest--
+    // nest++
+    continue;
+    // nest--
+  }
+  // nest--
+}
+----
+--
+
+[.source.s67x16]
+== !Details
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+auto utf8Decode(MemoryView view) -> Generator<CodePoint> {
+  // nest++
+  auto take = [&]() -> CodePoint { return *view.begin++; };
+  // nest--
+  // nest++
+  while (!view.empty()) {
+    // nest++
+    auto c0 = take();
+    // nest--
+    // nest++
+    if ((c0 & 0x80) != 0x80) {
+      // nest++
+      co_yield c0;
+      // nest--
+    }
+    // nest--
+    // nest++
+    else if ((c0 & 0xE0) == 0xC0) { 
+      // nest++
+      if (view.empty()) co_return;
+      // nest--
+      // nest++
+      auto c1 = take();
+      // nest--
+      // nest++
+      if ((c1 & 0xC0) != 0x80) co_yield {};
+      // nest--
+      // nest++
+      co_yield { ((c0 & 0x1Fu) << 6) | (c1 & 0x3Fu) };
+      // nest--
+    }
+    // nest--
+    // nest++
+    else { /* … */ }
+    // nest--
+  }
+  // nest--
+}
+----
+--
+
+== Tokenizer
+
+[%build]
+--
+[source.lang-cpp%nested, cpp]
+----
+auto tokenize(Generator<CodePoint>)
+// nest++
+    -> Generator<Token>
+// nest--
+----
+--
+
+[.source]
+== !Ohne CoRoutinen
+
+[%build]
+--
+[source.lang-cpp%nested, cpp]
+----
+auto tokenize(Generator<CodePoint> &&input)
+    -> Generator<Token> {
+  // nest++
+  struct Scanner {
+    // nest++
+    Generator<CodePoint> input;
+    // nest--
+    // nest++
+    TextPosition cursor{};
+    // nest--
+    // nest++
+    CodePoint cp{};
+    // nest--
+    // nest++
+    operator bool() const { /* ? */ }
+    // nest--
+    // nest++
+    auto next() -> Token { /* … */ }
+    // nest--
+  };
+  return Scanner{std::move(input)};
+  // nest--
+}
+----
+--
+
+[.source.s67x16]
+== !Als CoRoutine
+
+[%build]
+--
+[source.lang-cpp%nested, cpp]
+----
+auto tokenize(Generator<CodePoint> &input) -> Generator<Token> {
+  auto cursor = TextPosition{};
+  auto next = [&] { return (++input) ? *input : CodePoint{}; };
+  auto cp = next();
+  while (cp) {
+    auto token = [begin = cursor, &cursor, &file](auto data) {
+      return Token{TextRange{begin, cursor}, data};
+    };
+    if (cp == ':') { 
+      cp = next(); cursor.column++; 
+      co_yield token(Colon{});
+      continue;
+    }
+    // …
+  }
+}
+----
+--
+
+== Zusammenfassung
+
+[%fit%build]
+* Andere Denkweise
+* Clean Code
+* Performance?
+
+[.title]
+== Performance
+
+// Compiler Explorer
+
+[.title]
+== Mehr…
+
+// TODO
+
+[.title]
+== Danke!
+
+Noch Fragen?

@@ -1,0 +1,12 @@
+*, ::before, ::after { box-sizing: inherit }
+
+html
+  box-sizing border-box
+  font-size 16px // NOTE normalize the base font size (at least for testing)
+  quotes $sym-dblquote-left $sym-dblquote-right
+
+aside[role=notes] { display: none }
+figure { margin: 0 }
+img, video { vertical-align: middle }
+p, li { line-height: normal }
+p { line-height: 1.5; margin: 0 0 0.75rem 0 }
