@@ -145,7 +145,7 @@ auto operator co_await(Result<R, E> &&o) noexcept {
             return std::move(o).ok();
         }
 
-        void await_suspend(Handle h) {
+        void await_suspend(Handle h) noexcept {
             h.promise().return_value(o);
             h.destroy();
         }

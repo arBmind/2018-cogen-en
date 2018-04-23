@@ -39,8 +39,8 @@ struct Generator {
                     gen = nullptr;
                 return *this;
             }
-            bool operator==(End) const { return !gen; }
-            bool operator!=(End) const { return gen; }
+            bool operator==(End) const noexcept { return !gen; }
+            bool operator!=(End) const noexcept { return gen; }
         };
         if (*this) return Iterator{this, next()};
         return Iterator{};

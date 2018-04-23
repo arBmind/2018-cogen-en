@@ -11,23 +11,23 @@ struct Generator {
     struct Promise {
         T current_m;
 
-        auto get_return_object() {
+        auto get_return_object() noexcept {
             return Generator{Handle::from_promise(*this)};
         }
 
-        auto initial_suspend() {
+        auto initial_suspend() noexcept {
             return coro::suspend_always{};
         }
-        auto final_suspend() {
+        auto final_suspend() noexcept {
             return coro::suspend_always{};
         }
 
-        auto yield_value(T value) {
+        auto yield_value(T value) noexcept {
             current_m = std::move(value);
             return coro::suspend_always{};
         }
-        auto return_void() {}
-        auto unhandled_exception() {}
+        auto return_void() noexcept {}
+        auto unhandled_exception() noexcept {}
     };
 
     auto operator*() const -> const T & {

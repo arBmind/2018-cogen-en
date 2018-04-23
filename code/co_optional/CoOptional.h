@@ -28,7 +28,9 @@ auto operator co_await(Optional<V> &&o) noexcept {
             return std::move(o).value();
         }
 
-        static void await_suspend(Handle h) { h.destroy(); }
+        static void await_suspend(Handle h) noexcept {
+            h.destroy();
+        }
     };
     return Awaitable{o};
 }
