@@ -1,3 +1,35 @@
 h1, h2
   font-weight 400
   color $color-heading
+
+figure.quote {
+  /* Versatility: blockquote, p, h2... */
+  position: relative;
+
+  &:before {
+    content: '\201C';
+    font-family: arial, sans-serif;
+    font-size: 12rem;
+    height: 5.6rem;
+    left: -.8rem;
+    line-height: 1;
+    position: absolute;
+    text-align: center;
+    top: -4rem;
+    width: 5.6rem;
+  }
+
+  @media (min-width: 768px) {
+    padding-left: 6.4rem;
+
+    p {
+      font-size: 3.2rem;
+      line-height: 4.8rem;
+    }
+
+    &:before {
+      left: .8rem;
+      top: -1.6rem;
+    }
+  }
+}

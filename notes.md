@@ -13,6 +13,12 @@ Goals:
 Papers:
 2004 "Revisiting Coroutines" Rio/Brazil: http://www.inf.puc-rio.br/~roberto/docs/MCC15-04.pdf 
 
+Story:
+* Rebuild Compiler
+* Rewrite with C++17
+* C# Enumerator - yield
+* CoRoutines TS
+
 Ideen:
 
 classic function
@@ -34,13 +40,27 @@ co_return
 
 
 ```cpp
-auto vectest() {
-    return std::vector{42, 23};
+auto numbers() {
+    return std::vector{23, 42};
 }
 ```
 
 ```cpp
-auto gentest() -> Generator<int> {
+auto numbers() {
+  
+}
+```
+
+```cpp
+auto numbers() {
+    co_yield 23;
+    co_yield 42;
+}
+```
+
+
+```cpp
+auto numbers() -> Generator<int> {
     std::cout << "before!\n";
     co_yield 42;
     std::cout << "between!\n";

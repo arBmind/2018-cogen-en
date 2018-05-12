@@ -3,7 +3,9 @@
 // tag::gen[]
 template<class T>
 struct FromGenerator {
+  // nest++
   T start;
+  // nest--
 
   // nest++
   struct End {};

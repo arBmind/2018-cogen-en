@@ -22,39 +22,23 @@ Project {
         }
     }
 
-    Application {
-        name: "array"
-        consoleApplication: true
-        Depends { name: "cpp17" }
-        files: [
-            "array/main.cpp",
-        ]
-    }
-
-    Application {
-        name: "from_gen"
-        consoleApplication: true
-        Depends { name: "cpp17" }
-        files: [
-            "from_gen/main.cpp",
-        ]
-    }
-
-    Application {
-        name: "cogen"
-        consoleApplication: true
-        Depends { name: "cpp17" }
-        files: [
-            "cogen/main.cpp",
-        ]
-    }
-    
-    Application {
+    StaticLibrary {
         name: "coyield"
-        consoleApplication: true
         Depends { name: "cpp17" }
         files: [
-            "coyield/main.cpp",
+            "CoYield.cpp",
+            "CoYield.h",
+        ]
+
+        Export { Depends { name: "cpp17" } }
+    }
+    Application {
+        name: "coyield_test"
+        consoleApplication: true
+        Depends { name: "coyield" }
+        files: [
+            "CoYieldTest.cpp",
         ]
     }
+
 }

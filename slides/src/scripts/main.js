@@ -21,6 +21,8 @@ function prismjs() {
   var Prism = require('prismjs');
   require('prismjs/components/prism-c');
   require('prismjs/components/prism-cpp');
+  require('prismjs/components/prism-csharp');
+  require('prismjs/components/prism-nasm');
   require('prismjs/plugins/toolbar/prism-toolbar');
   require('prismjs/plugins/show-language/prism-show-language');
   require('prismjs/plugins/keep-markup/prism-keep-markup');

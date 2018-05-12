@@ -18,27 +18,97 @@
 Willkommen
 ****
 
-== CoRoutinen ?
+[.subtitle]
+== My Story
+
+== !
+
+image::rebuild_logo.png[width="450"]
+
+[.build]
+&nbsp;
 
 [%build]
-* ausprobiert?
-* Aufgaben implementiert?
+*Rebuild* language project
+
+
+[.cue]
+****
+Suche nach besseren Sprachen
+****
+
+== C#
+
+[.source.s54x13]
+== !
+
+[.build]
+--
+[source.lang-csharp%nested, csharp]
+----
+IEnumerable<Token> ScanFile(TextInput input) {
+  // nest++
+  while (true) {
+    // nest++
+    switch (input.PeekChar) {
+      // nest++
+    case '\0':
+      yield break;
+      // nest--
+      // nest++
+    case ' ':
+    case '\t':
+      yield return ScanWhitespace(input);
+      // nest--
+      // nest++
+      continue;
+      // nest--
+    // nest++
+    // …
+    // nest--
+    }
+    // nest--
+  }
+  // nest--
+}
+----
+--
+
+== !
+
+== C++17 Coroutine-TS
+
+[%build]
+* Gelesen ?
+* Ausprobiert?
 
 [.cue]
 ****
 Publikum fragen
+* ISO/IEC TS 22277:2017 ?
+* TS Draft N4680
+* Nachfolger Drafts N4723 oder link:http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4736.pdf[N4736] 
 ****
 
-== CoRoutine
+[.subtitle]
+== Kurze Einführung
+
+== Co-Routine
 
 [%build]
-* Funktion
+* ist eine Funktion
 * mit Unterbrechungen
 
 [.cue]
 ****
 * Ist eine generalisierte
 ****
+
+== `yield`
+
+[%build]
+* ein [language-cpp]#`return`#
+* mit Fortsetzung
 
 == !
 
@@ -48,7 +118,7 @@ Publikum fragen
 * Dann…
 ****
 
-[.title]
+[.subtitle]
 == Generatoren ?
 
 [.cue]
@@ -129,6 +199,13 @@ include::{codedir}/cogen/main.cpp[tag=from]
 * Input Iterator
 * Interner Zustand
 
+[.cue]
+****
+* Rückgabe `begin()` und `end()`
+* Bilden eine Input Range
+* Zustand muss irgendwie gespeichert werden
+****
+
 [.source]
 == !From Generator
 
@@ -160,7 +237,7 @@ include::{codedir}/from_gen/main.cpp[tag=iter]
 ****
 * Eigentliche Logik
 * Zustand
-* In Praxis noch einiges mehr
+* Minimale Implementierung
 ****
 
 == Probleme?
@@ -185,7 +262,7 @@ include::{codedir}/from_gen/main.cpp[tag=iter]
 * Nur ein Generator
 ****
 
-[.title]
+[.subtitle]
 == Wie funktioniert [language-cpp]#`co_yield`#?
 
 [.source]
@@ -206,6 +283,11 @@ include::{codedir}/cogen/main.cpp[tag=trait]
 * co_yield im Body
 * coroutine_traits mit Argument-Typen
 * promise_type
+* Alternativ im Return-Typ
+
+… die Magic ist im Promise Type
+
+Vorher:
 ****
 
 [.source]
@@ -234,12 +316,16 @@ include::{codedir}/cogen/main.cpp[tag=include]
 ----
 include::{codedir}/cogen/main.cpp[tag=promise]
 include::{codedir}/cogen/main.cpp[tag=suspend]
-  // nest++
   // …
-  // nest--
 };
 ----
 --
+
+[.cue]
+****
+* Methode sofort unterbrechen
+* Vor Zerstörung unterbrechen
+****
 
 [.source]
 == !Promise Yield
@@ -251,9 +337,7 @@ include::{codedir}/cogen/main.cpp[tag=suspend]
 include::{codedir}/cogen/main.cpp[tag=promise]
   // …
 include::{codedir}/cogen/main.cpp[tag=yield]
-  // nest++
   // …
-  // nest--
 };
 ----
 --
@@ -277,6 +361,11 @@ include::{codedir}/cogen/main.cpp[tag=return]
 ----
 --
 
+[.cue]
+****
+… was passiert im Generator?
+****
+
 [.source]
 == !Generator LifeCycle
 
@@ -289,6 +378,11 @@ include::{codedir}/cogen/main.cpp[tag=lifecycle]
 };
 ----
 --
+
+[.cue]
+****
+Handle fasst Zustand + Promise
+****
 
 [.source]
 == !Generator Work
@@ -316,7 +410,7 @@ include::{codedir}/cogen/main.cpp[tag=work]
 * `coroutine_handle` steuert State-Machine
 ****
 
-[.title]
+[.subtitle]
 == Praxis
 
 [%fit%build]
@@ -423,12 +517,11 @@ auto utf8Decode(MemoryView view) -> Generator<CodePoint> {
     auto c0 = take();
     // nest--
     // nest++
-    if ((c0 & 0x80) != 0x80) {
+    if ((c0 & 0x80) != 0x80)
+    // nest--
       // nest++
       co_yield c0;
       // nest--
-    }
-    // nest--
     // nest++
     else if ((c0 & 0xE0) == 0xC0) { 
       // nest++
@@ -441,7 +534,7 @@ auto utf8Decode(MemoryView view) -> Generator<CodePoint> {
       if ((c1 & 0xC0) != 0x80) co_yield {};
       // nest--
       // nest++
-      co_yield { ((c0 & 0x1Fu) << 6) | (c1 & 0x3Fu) };
+      else co_yield { ((c0 & 0x1Fu) << 6) | (c1 & 0x3Fu) };
       // nest--
     }
     // nest--
@@ -482,7 +575,7 @@ auto tokenize(Generator<CodePoint> &&input)
     Generator<CodePoint> input;
     // nest--
     // nest++
-    TextPosition cursor{};
+    TextPosition position{};
     // nest--
     // nest++
     CodePoint cp{};
@@ -508,20 +601,42 @@ auto tokenize(Generator<CodePoint> &&input)
 [source.lang-cpp%nested, cpp]
 ----
 auto tokenize(Generator<CodePoint> &input) -> Generator<Token> {
-  auto cursor = TextPosition{};
+  // nest++
+  auto position = TextPosition{};
+  // nest--
+  // nest++
   auto next = [&] { return (++input) ? *input : CodePoint{}; };
+  // nest--
+  // nest++
   auto cp = next();
+  // nest--
+  // nest++
   while (cp) {
-    auto token = [begin = cursor, &cursor, &file](auto data) {
-      return Token{TextRange{begin, cursor}, data};
+    // nest++
+    auto token = [begin = position, end = &position](auto data) {
+      // nest++
+      return Token{TextRange{begin, end}, data};
+      // nest--
     };
+    // nest--
+    // nest++
     if (cp == ':') { 
-      cp = next(); cursor.column++; 
+      // nest++
+      cp = next(); position.column++; 
+      // nest--
+      // nest++
       co_yield token(Colon{});
+      // nest--
+      // nest++
       continue;
+      // nest--
     }
+    // nest--
+    // nest++
     // …
+    // nest--
   }
+  // nest--
 }
 ----
 --
@@ -533,17 +648,273 @@ auto tokenize(Generator<CodePoint> &input) -> Generator<Token> {
 * Clean Code
 * Performance?
 
-[.title]
+[.subtitle]
 == Performance
 
-// Compiler Explorer
+== !
 
-[.title]
-== Mehr…
+[%build]
+* clang
+* `-std=c++2a -O3`
+* `-stdlib=libc++ -fcoroutines-ts`
+* link:https://godbolt.org[Compiler Explorer]
 
-// TODO
+[.source]
+== !
 
-[.title]
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+template<size_t N>
+auto fixedSum() {
+    auto sum = 0u;
+    for (auto v : iota(N + 1)) sum += v;
+    return sum;
+}
+
+// nest++
+auto fixedTest() {
+    return fixedSum<100>();
+}
+// nest--
+----
+--
+
+[.source]
+== !
+
+[source.lang-nasm, nasm]
+----
+fixedTest():
+        mov     eax, 5050
+        ret
+----
+
+[.source]
+== !
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+auto simpleSum(size_t n) {
+    auto sum = 0u;
+    for (auto v = 0; v <= n; ++v) sum += v;
+    return sum;
+}
+----
+--
+
+[.source]
+== !
+
+[source.lang-nasm, nasm]
+----
+simpleSum(unsigned long):         ; rdi = n
+        lea     rax, [rdi - 1]    ; rax = rdi - 1
+        imul    rax, rdi          ; rax *= rdi
+        shr     rax, 1            ; rax /= 2
+        add     edi, eax          ; edi += eax
+        mov     eax, edi          ; eax = edi
+        ret                       ; return eax
+----
+
+[.source]
+== !
+
+[source.lang-cpp%nested, cpp]
+----
+auto dynSum(size_t n) {
+    auto sum = 0u;
+    for (auto v : iota(n + 1)) sum += v;
+    return sum;
+}
+----
+
+[.source.s90x23]
+== !
+
+[source.lang-nasm, nasm]
+----
+dynSum(unsigned long):            ; rdi = n
+        add     rdi, 1            ; rdi += 1
+        sete    cl                ; cl = rdi == 0
+        je      .LBB1_1           ; if (rdi == 0) goto LBB1_1
+        xor     eax, eax          ; eax = 0
+        xor     esi, esi          ; esi = 0
+.LBB1_4:
+        mov     edx, esi          ; edx = esi
+        add     eax, esi          ; eax += esi
+        mov     esi, 0            ; esi = 0
+        test    cl, 1             ; cl & 1 <=> 0
+        mov     ecx, 0            ; ecx = 0
+        jne     .LBB1_4           ; if (cl != 0) goto LBB1_4
+        add     edx, 1            ; edx += 1
+        xor     ecx, ecx          ; ecx = 0
+        mov     esi, edx          ; esi = edx
+        cmp     rdi, rdx          ; rdi <=> rdx
+        ja      .LBB1_4           ; if (rdi > rdx) goto LBB1_4
+        ret                       ; return eax
+.LBB1_1:
+        xor     eax, eax          ; eax = 0
+        ret                       ; return eax
+----
+
+== Resultat
+
+[%build]
+* link:https://godbolt.org/g/W8XZtN[Godbolt Link]
+* use [language-cpp]#`noexcept`#
+* Klappt nicht perfekt
+* Wird besser!
+
+[.subtitle]
+== [language-cpp]#`co_yield`# expression
+
+== N4736
+
+""
+… the yield-expression is equivalent to the expression 
+[language-cpp]#`co_await p.yield_value(e)`#.
+""
+
+[.source]
+== !
+
+[source.lang-cpp%nested, cpp]
+----
+auto repeater(int v) -> CoYield<int, int> {
+  // nest++
+  while (true) {
+    // nest++
+    v = co_yield v;
+    // nest--
+  }
+  // nest--
+}
+----
+
+[.source]
+== !Promise Yield
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/coyield/main.cpp[tag=promise]
+  // …
+include::{codedir}/coyield/main.cpp[tag=yield]
+};
+----
+--
+
+[.source]
+== !Awaitable
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/coyield/main.cpp[tag=awaitable]
+----
+--
+
+[.cue]
+****
+* speichert den aktuellen input
+* `await_ready` wir wollen warten
+* `await_resume` gibt den letzten Input aus
+* `await_suspend` muss nix machen
+****
+
+[.subtitle]
+== Zusammenfassung
+
+== Vorteile
+
+[%build]
+* State Machine einer Funktion
+* Bessere Lokalität
+* Funktionale Denkweise
+
+== Nachteile
+
+[%build]
+* Neu!
+* Batteries not included!
+* Noch nicht im C++ Standard
+
+== Links
+
+[%build]
+* link:https://cpplang.now.sh[Slack Channel #coroutine]
+* link:https://github.com/lewissbaker/cppcoro[github.com/lewissbaker/cppcoro]
+
+== !
+
+image::andreas.png[role="center", width="400"]
+
+&nbsp;
+
+[%build]
+* Andreas Reischuck
+* @*arBmind*
+
+
+== !
+
+image::hicknhackLogo_new_text.png[role="center", width="400"]
+
+&nbsp;
+
+[.green]_Arbeitet_ mit uns…
+
+[.cue]
+****
+* C++ Qt UIs
+* Dresden
+****
+
+== !
+
+image::cppug.png[role="pull-right", width="550"]
+
+&nbsp;
+
+[.green]*Vorträge* halten +
+& *Dresden* Tour
+
+[.cue]
+****
+* Video Recording
+* persönhiche Stadtführung
+* Ich komme im Gegenzug auch gerne zu euch!
+****
+
+== !
+
+image::rebuild_logo.png[role="pull-left", width="450"]
+
+*Rebuild* language project
+
+[.bigger]
+&nbsp;
+
+[.center]
+[.green]__Mitmachen__
+
+[.cue]
+****
+* bessere Sprachen & Tools für alle
+* Compiler built with C++17
+****
+
+== Probiert *mehr* aus!
+
+== Probiert *Coroutinen* aus!
+
+[.subtitle]
 == Danke!
 
 Noch Fragen?

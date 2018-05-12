@@ -13,42 +13,55 @@ auto utf8Decode(MemoryView data) -> Generator<FileChar> {
             return FileChar{cp, ptr};
         };
         auto c0 = take();
-        if ((c0 & 0x80) != 0x80) {
+        if ((c0 & 0x80) != 0x80)
             co_yield chr(c0);
-        }
         else if ((c0 & 0xE0) == 0xC0) {
             if (!hasData(1)) co_return;
             auto c1 = take();
-            if ((c1 & 0xC0) != 0x80) co_yield chr({});
-            co_yield chr(((c0 & 0x1Fu) << 6) |
-                         ((c1 & 0x3Fu) << 0));
+            if ((c1 & 0xC0) != 0x80)
+                co_yield chr({});
+            else
+                co_yield chr(((c0 & 0x1Fu) << 6) |
+                             ((c1 & 0x3Fu) << 0));
         }
         else if ((c0 & 0xF0) == 0xE0) {
             if (!hasData(2)) co_return;
             auto c1 = take();
-            if ((c1 & 0xC0) != 0x80) co_yield chr({});
+            if ((c1 & 0xC0) != 0x80) {
+                co_yield chr({});
+                continue;
+            }
             auto c2 = take();
-            if ((c2 & 0xC0) != 0x80) co_yield chr({});
-            co_yield chr(((c0 & 0x0Fu) << 12) |
-                         ((c1 & 0x3Fu) << 6) |
-                         ((c2 & 0x3Fu) << 0));
+            if ((c2 & 0xC0) != 0x80)
+                co_yield chr({});
+            else
+                co_yield chr(((c0 & 0x0Fu) << 12) |
+                             ((c1 & 0x3Fu) << 6) |
+                             ((c2 & 0x3Fu) << 0));
         }
         else if ((c0 & 0xF8) == 0xF0) {
             if (!hasData(3)) co_return;
             auto c1 = take();
-            if ((c1 & 0xC0) != 0x80) co_yield chr({});
+            if ((c1 & 0xC0) != 0x80) {
+                co_yield chr({});
+                continue;
+            }
             auto c2 = take();
-            if ((c2 & 0xC0) != 0x80) co_yield chr({});
+            if ((c2 & 0xC0) != 0x80) {
+                co_yield chr({});
+                continue;
+            }
             auto c3 = take();
-            if ((c3 & 0xC0) != 0x80) co_yield chr({});
-            co_yield chr(((c0 & 0x07u) << 18) |
-                         ((c1 & 0x3Fu) << 12) |
-                         ((c2 & 0x3Fu) << 6) |
-                         ((c3 & 0x3Fu) << 0));
+            if ((c3 & 0xC0) != 0x80)
+                co_yield chr({});
+            else
+                co_yield chr(((c0 & 0x07u) << 18) |
+                             ((c1 & 0x3Fu) << 12) |
+                             ((c2 & 0x3Fu) << 6) |
+                             ((c3 & 0x3Fu) << 0));
         }
-        else {
+        else
             co_yield chr({});
-        }
     }
 }
 
