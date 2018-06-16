@@ -1,5 +1,5 @@
-= Einführung & Praxisreport: Coroutinen als Generatoren
-:title: Einführung & Praxisreport: CoRoutinen als Generatoren
+= Einführung & Praxisreport: Co-Routinen als Generatoren
+:title: Einführung & Praxisreport: Co-Routinen als Generatoren
 :author: Andreas Reischuck
 :!twitter: @arBmind
 :!avatar: andreas.png
@@ -10,6 +10,7 @@
 :use-link-attrs:
 :title-separator: :
 :codedir: code
+:data-uri!:
 
 *ADC++ 2018*
 
@@ -19,7 +20,7 @@ Willkommen
 ****
 
 [.subtitle]
-== My Story
+== kurze Geschichte
 
 == !
 
@@ -76,6 +77,15 @@ IEnumerable<Token> ScanFile(TextInput input) {
 
 == !
 
+image::trail_graph_of_yielding.jpg[width="612"]
+
+== C++17
+
+[%build]
+* [language-cpp]#`std::variant<>`#
+* [language-cpp]#`std::string_view`#
+* …
+
 == C++17 Coroutine-TS
 
 [%build]
@@ -85,6 +95,7 @@ IEnumerable<Token> ScanFile(TextInput input) {
 [.cue]
 ****
 Publikum fragen
+
 * ISO/IEC TS 22277:2017 ?
 * TS Draft N4680
 * Nachfolger Drafts N4723 oder link:http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4736.pdf[N4736] 
@@ -104,13 +115,32 @@ Publikum fragen
 * Ist eine generalisierte
 ****
 
+== `await`
+
+[%build]
+* bedingte Unterbrechung
+* kein Resultat
+
+[.cue]
+****
+* Asynchroner Task fertig
+* Operation erfolgreich
+****
+
 == `yield`
 
 [%build]
-* ein [language-cpp]#`return`#
-* mit Fortsetzung
+* eine Unterbrechung
+* mit [language-cpp]#`return`#
+
+[.cue]
+****
+* await return value
+****
 
 == !
+
+image::Awaiting_Passengers.jpg[width="1024"]
 
 [.cue]
 ****
@@ -253,7 +283,9 @@ include::{codedir}/from_gen/main.cpp[tag=iter]
 * nicht optimierbar
 ****
 
-== !Reasoning
+== !Begründungen
+
+image::Antique_Molder.jpg[width="1920"]
 
 [.cue]
 ****
@@ -266,7 +298,7 @@ include::{codedir}/from_gen/main.cpp[tag=iter]
 == Wie funktioniert [language-cpp]#`co_yield`#?
 
 [.source]
-== !CoRoutine Trait
+== !Coroutine Trait
 
 [.build]
 --
@@ -291,7 +323,7 @@ Vorher:
 ****
 
 [.source]
-== !CoRoutine Includes
+== !Coroutine includes
 
 [.build]
 --
@@ -444,7 +476,7 @@ auto utf8Decode(MemoryView)
 ****
 
 [.source]
-== !Ohne CoRoutinen
+== !Ohne Co-Routinen
 
 [%build]
 --
@@ -561,7 +593,7 @@ auto tokenize(Generator<CodePoint>)
 --
 
 [.source]
-== !Ohne CoRoutinen
+== !Ohne Co-Routinen
 
 [%build]
 --
@@ -594,7 +626,7 @@ auto tokenize(Generator<CodePoint> &&input)
 --
 
 [.source.s67x16]
-== !Als CoRoutine
+== !Als Co-Routine
 
 [%build]
 --
@@ -912,7 +944,15 @@ image::rebuild_logo.png[role="pull-left", width="450"]
 
 == Probiert *mehr* aus!
 
-== Probiert *Coroutinen* aus!
+== Probiert *Co-Routinen* aus!
+
+== Photo Credits
+
+[.small]
+* link:http://www.flickr.com/photos/50830796@N04/29859713915[trail graph of yielding] link:https://creativecommons.org/licenses/by-sa/2.0/[(cc-by-sa-license)]
+* link:https://www.flickr.com/photos/nikonvscanon/504339352[Awaiting Passengers] link:https://creativecommons.org/licenses/by/2.0/[(cc-by-license)]
+* link:https://www.flickr.com/photos/darronb/14061239268[Antique Molder - Hall &
+Brown Wood Working Machine Co., St. Louis, MO] link:https://creativecommons.org/licenses/by-sa/2.0/[(cc-by-sa-license)]
 
 [.subtitle]
 == Danke!
