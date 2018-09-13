@@ -68,7 +68,7 @@ auto utf8Decode(MemoryView data) -> Generator<FileChar> {
 #define TAB_WIDTH 4u
 
 auto scan(const FileContent &file,
-          Generator<FileChar> &input) -> Generator<Token> {
+          Generator<FileChar> input) -> Generator<Token> {
     auto cursor = TextPosition{};
     auto next = [&] {
         if (++input) return *input;

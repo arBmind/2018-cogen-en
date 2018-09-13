@@ -42,7 +42,7 @@ void scannerTest(const CodePoint (&cp)[CP],
     auto input = makeCodePoints(cp);
 
     auto n = 0u;
-    for (auto t : scan({}, input)) {
+    for (auto t : scan({}, std::move(input))) {
         assert(t.kind == tok[n]);
         n++;
     }

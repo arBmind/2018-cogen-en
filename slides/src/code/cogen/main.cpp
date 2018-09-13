@@ -124,6 +124,7 @@ struct Generator<T>::Promise {
 // tag::trait[]
 // nest++
 namespace std::experimental {
+
 // nest++
 template<class T, class... Vs>
 struct coroutine_traits<Generator<T>, Vs...> {
@@ -133,6 +134,7 @@ struct coroutine_traits<Generator<T>, Vs...> {
   // nest--
 };
 // nest--
+
 } // namespace std::experimental
 // nest--
 // end::trait[]

@@ -1,5 +1,5 @@
-= Einführung & Praxisreport: Co-Routinen als Generatoren
-:title: Einführung & Praxisreport: Co-Routinen als Generatoren
+= Coroutine TS: A new way of thinking
+:title: Coroutine TS: A new way of thinking
 :author: Andreas Reischuck
 :!twitter: @arBmind
 :!avatar: andreas.png
@@ -12,152 +12,140 @@
 :codedir: code
 :data-uri!:
 
-*ADC++ 2018*
+*C++ Usergroup Dresden*
 
 [.cue]
 ****
-Willkommen
+Welcome
 ****
-
-[.subtitle]
-== kurze Geschichte
-
-== !
-
-image::rebuild_logo.png[width="450"]
-
-[.build]
-&nbsp;
-
-[%build]
-*Rebuild* language project
-
-
-[.cue]
-****
-Suche nach besseren Sprachen
-****
-
-== C#
-
-[.source.s54x13]
-== !
-
-[.build]
---
-[source.lang-csharp%nested, csharp]
-----
-IEnumerable<Token> ScanFile(TextInput input) {
-  // nest++
-  while (true) {
-    // nest++
-    switch (input.PeekChar) {
-      // nest++
-    case '\0':
-      yield break;
-      // nest--
-      // nest++
-    case ' ':
-    case '\t':
-      yield return ScanWhitespace(input);
-      // nest--
-      // nest++
-      continue;
-      // nest--
-    // nest++
-    // …
-    // nest--
-    }
-    // nest--
-  }
-  // nest--
-}
-----
---
-
-== !
-
-image::trail_graph_of_yielding.jpg[width="612"]
-
-== C++17
-
-[%build]
-* [language-cpp]#`std::variant<>`#
-* [language-cpp]#`std::string_view`#
-* …
 
 == C++17 Coroutine-TS
 
 [%build]
-* Gelesen ?
-* Ausprobiert?
+* Who read about it?
+* Who tried it?
 
 [.cue]
 ****
-Publikum fragen
+Ask audience
 
+* Gor Nishanov (Microsoft)
 * ISO/IEC TS 22277:2017 ?
 * TS Draft N4680
-* Nachfolger Drafts N4723 oder link:http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4736.pdf[N4736] 
+* Nachfolger Drafts N4760 oder link:http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4760.pdf[N4760] 
 ****
 
-[.subtitle]
-== Kurze Einführung
-
-== Co-Routine
+== What is a Coroutine?
 
 [%build]
-* ist eine Funktion
-* mit Unterbrechungen
+* generalized function
+* with continuations
 
 [.cue]
 ****
-* Ist eine generalisierte
+* 1958 coined for Assembly
+* 1963 first mentioned
+
+* cool, hard to grasp
+* let's go visual
 ****
 
-== `await`
+== !
 
-[%build]
-* bedingte Unterbrechung
-* kein Resultat
+image::function.png[width="415"]
 
-[.cue]
-****
-* Asynchroner Task fertig
-* Operation erfolgreich
-****
+== !
+
+image::coroutine.png[width="415"]
 
 == `yield`
 
 [%build]
-* eine Unterbrechung
-* mit [language-cpp]#`return`#
+* suspend coroutine
+* intermediate [language-cpp]#`return`#
 
 [.cue]
 ****
-* await return value
+* wait for external resume
+****
+
+[.subtitle]
+== What is it for?
+
+[.cue]
+****
+* You may have never missed it.
+****
+
+== !
+
+[%build]
+* async tasks
+* generators
+* state machines
+* … *your imagination* …
+
+[.subtitle]
+== async tasks
+
+== !
+
+[%build]
+* non blocking IO
+* prevent callback hell
+* readable code
+
+== [language-cpp]#`co_await`#
+
+[%build]
+* conditional suspension
+* no result
+
+[.cue]
+****
+* wait for available data
 ****
 
 == !
 
 image::Awaiting_Passengers.jpg[width="1024"]
 
+
 [.cue]
 ****
-* Fragen?
-* Dann…
+* Questions?
+* Please interrupt me!
+* let's go on…
 ****
+
+== !
+
+image::mcnellis_cppcon2016.png[width="1024"]
+
+[.small]
+&nbsp;
+
+[%build.small]
+* link:https://youtu.be/ZTqHjjm86Bw[James McNellis "Introduction to C++ Coroutines" @ CppCon 2016]
+* link:https://youtu.be/_fu0gx-xseY[Gor Nishanov "C++ Coroutines - a negative overhead abstraction" @ CppCon 2015]
 
 [.subtitle]
-== Generatoren ?
+== Generators
+
+== Generators ?
+
+[%build]
+* next result on demand
 
 [.cue]
 ****
-Publikum fragen
+What is a generator?
+
+* let's look at some examples
 ****
 
 [.source]
-== Beispiel
+== !
 
 [.build]
 --
@@ -169,11 +157,14 @@ include::{codedir}/array/main.cpp[tag=slide]
 
 [.cue]
 ****
-* Generator?
+* Generator? - not on demand
 ****
 
 [.source]
-== Co-Routine Generator
+== Simple Coroutine
+
+[.small]
+&nbsp;
 
 [%build]
 --
@@ -184,7 +175,10 @@ include::{codedir}/cogen/main.cpp[tag=23_42]
 --
 
 [.source]
-== Iota Generator
+== Iota
+
+[.small]
+&nbsp;
 
 [.build.build-items]
 --
@@ -196,11 +190,14 @@ include::{codedir}/cogen/main.cpp[tag=iota]
 
 [.cue]
 ****
-* Alle Zahlen von 0 bis n-1
+* all integer numbers between 0 and n-1
 ****
 
 [.source]
-== Endloser Generator
+== Endless
+
+[.small]
+&nbsp;
 
 [.build.build-items]
 --
@@ -212,29 +209,17 @@ include::{codedir}/cogen/main.cpp[tag=from]
 
 [.cue]
 ****
-* Alle Zahlen ab n
+* all integer numbers starting with n
 ****
 
 == [language-cpp]#`Generator<T>`# & [language-cpp]#`co_yield`#
 
 [.cue]
 ****
-* Was ist neu
+* New …
 ****
 
-== Generatoren ohne Co-Routinen
-
-[%fit%build]
-* [language-cpp]#`begin()`# & [language-cpp]#`end()`#
-* Input Iterator
-* Interner Zustand
-
-[.cue]
-****
-* Rückgabe `begin()` und `end()`
-* Bilden eine Input Range
-* Zustand muss irgendwie gespeichert werden
-****
+== Without Coroutine
 
 [.source]
 == !From Generator
@@ -249,7 +234,7 @@ include::{codedir}/from_gen/main.cpp[tag=gen]
 
 [.cue]
 ****
-* C++17 erlaubt unterschiedliche Iteratoren
+* C++17 allows different iterator types here
 ****
 
 [.source]
@@ -270,32 +255,94 @@ include::{codedir}/from_gen/main.cpp[tag=iter]
 * Minimale Implementierung
 ****
 
-== Probleme?
+== Summary
 
 [%fit%build]
-* Logik
-* State
-* State-Machine
+* [language-cpp]#`begin()`# & [language-cpp]#`end()`#
+* input iterator implementation
+* manage internal state
 
 [.cue]
 ****
-* … in realem Code schwer zu managen
-* nicht optimierbar
+* `begin()` and `end()`
+* input range
+* state has to be managed
 ****
 
-== !Begründungen
+== Issues ?
+
+[%fit%build]
+* hidden logic
+* state
+* state machine
+
+[.cue]
+****
+* … not feasable for complex problems
+* hard to optimize
+****
+
+== !Reasons
 
 image::Antique_Molder.jpg[width="1920"]
 
 [.cue]
 ****
-* Co-Routinen erlauben uns das besser aufzuschreiben
-* Analog `if`-`goto` vs. `switch`, Funktor vs. Lambda
-* Nur ein Generator
+* Coroutines focus on logic
+* similar to `if`-`goto` vs. `switch`, Functor vs. Lambda
+* generalized generator implementation
 ****
 
+[.source]
+== !
+
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/cogen/main.cpp[tag=23_42]
+----
+
+[.cue]
+****
+* how can this actually work?
+****
+
+[.source]
+== !
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+struct Generate {
+  // nest++
+  size_t continuation{};
+  // nest--
+  // nest++
+  auto resume() -> long {
+    // nest++
+    switch (continuation) {
+      // nest++
+    case 0: continuation = 1;
+      // nest--
+      // nest++
+      return 23;
+      // nest--
+      // nest++
+    case 1: continuation = 2;      
+      // nest--
+      // nest++
+      return 42;
+      // nest--
+    }
+    // nest--
+  }
+  // nest--
+};
+----
+--
+
 [.subtitle]
-== Wie funktioniert [language-cpp]#`co_yield`#?
+== How does [language-cpp]#`co_yield`# actually work?
 
 [.source]
 == !Coroutine Trait
@@ -304,22 +351,16 @@ image::Antique_Molder.jpg[width="1920"]
 --
 [source.lang-cpp%nested, cpp]
 ----
-include::{codedir}/cogen/main.cpp[tag=fun]
-
 include::{codedir}/cogen/main.cpp[tag=trait]
 ----
 --
 
 [.cue]
 ****
-* co_yield im Body
-* coroutine_traits mit Argument-Typen
+* overload coroutine_traits with result and argument types
 * promise_type
-* Alternativ im Return-Typ
 
-… die Magic ist im Promise Type
-
-Vorher:
+… let's look into the promise type
 ****
 
 [.source]
@@ -335,8 +376,8 @@ include::{codedir}/cogen/main.cpp[tag=include]
 
 [.cue]
 ****
-* Jetzt kommt etwas code
-* Durchatmen!
+* let's look at some code
+* I show all the code - bare with me.
 ****
 
 [.source]
@@ -355,8 +396,11 @@ include::{codedir}/cogen/main.cpp[tag=suspend]
 
 [.cue]
 ****
-* Methode sofort unterbrechen
-* Vor Zerstörung unterbrechen
+* compiler hints us at required *six* callback methods
+
+The first two
+* suspend before executing the body - no eager start
+* suspend before destruction - keep last result
 ****
 
 [.source]
@@ -376,7 +420,7 @@ include::{codedir}/cogen/main.cpp[tag=yield]
 
 [.cue]
 ****
-* was passiert bei co_yield
+* what happens on co_yield
 ****
 
 [.source]
@@ -395,6 +439,10 @@ include::{codedir}/cogen/main.cpp[tag=return]
 
 [.cue]
 ****
+last three
+* result API
+* final return or exception
+
 … was passiert im Generator?
 ****
 
@@ -413,7 +461,8 @@ include::{codedir}/cogen/main.cpp[tag=lifecycle]
 
 [.cue]
 ****
-Handle fasst Zustand + Promise
+Coroutine handle contains state and promise
+* unique resource handling
 ****
 
 [.source]
@@ -428,7 +477,13 @@ include::{codedir}/cogen/main.cpp[tag=work]
 ----
 --
 
-== Zusammenfassung
+[.cue]
+****
+* implement basic input iterator
+* you may want to add begin() & end() implementation
+****
+
+== Summary
 
 [%fit%build]
 * [language-cpp]#`coroutine_traits<Ret, Args\...>`#
@@ -437,27 +492,31 @@ include::{codedir}/cogen/main.cpp[tag=work]
 
 [.cue]
 ****
-* `co_yield` -> compiler sucht den `promise_type`
-* `promise_type` steuert Co-Routine
-* `coroutine_handle` steuert State-Machine
+* `co_yield` -> compiler looks for `promise_type`
+* `promise_type` controls behavior and storage with 6 callbacks
+* `coroutine_handle` and custom API
 ****
 
 [.subtitle]
-== Praxis
+== Real World Comparison
 
-[%fit%build]
-* Schreibe einen Tokenizer für Python.
+== Test Scenario:
+
+Write a parser for Python code!
 
 == Design
 
 [%fit%build]
-* UTF8 kodierter Text
-* => Unicode Codepoints
+* UTF8 encoded source
+* => Unicode codepoints
 * => Tokens
 * => AST
 
 [.source]
-== UTF8 Decode
+== UTF8 Decoder
+
+[.small]
+&nbsp;
 
 [%build]
 --
@@ -472,13 +531,20 @@ auto utf8Decode(MemoryView)
 
 [.cue]
 ****
-* Ist das eine Co-Routine?
+* Is that a Coroutine?
+****
+
+== Without Coroutine
+
+[.cue]
+****
+* We use all available C++17 tricks
 ****
 
 [.source]
-== !Ohne Co-Routinen
+== !Without Coroutinen
 
-[%build]
+[.build]
 --
 [source.lang-cpp%nested, cpp]
 ----
@@ -506,8 +572,15 @@ auto utf8Decode(MemoryView view)
 ----
 --
 
+[.cue]
+****
+* local Decoder struct
+* converted to generic Generator API
+* only two functions…
+****
+
 [.source]
-== Als Co-Routine
+== With Coroutine
 
 [%build]
 --
@@ -531,6 +604,13 @@ auto utf8Decode(MemoryView view)
 }
 ----
 --
+
+== More Details
+
+[.cue]
+****
+* … to show you how actual code looks like
+****
 
 [.source.s67x16]
 == !Details
@@ -579,6 +659,13 @@ auto utf8Decode(MemoryView view) -> Generator<CodePoint> {
 ----
 --
 
+[.cue]
+****
+like for async:
+* focus on logic
+* readable code
+****
+
 == Tokenizer
 
 [%build]
@@ -592,14 +679,16 @@ auto tokenize(Generator<CodePoint>)
 ----
 --
 
-[.source]
-== !Ohne Co-Routinen
+== Without Coroutine
 
-[%build]
+[.source]
+== !Without Coroutine
+
+[.build]
 --
 [source.lang-cpp%nested, cpp]
 ----
-auto tokenize(Generator<CodePoint> &&input)
+auto tokenize(Generator<CodePoint> input)
     -> Generator<Token> {
   // nest++
   struct Scanner {
@@ -625,14 +714,16 @@ auto tokenize(Generator<CodePoint> &&input)
 ----
 --
 
-[.source.s67x16]
-== !Als Co-Routine
+== As Coroutine
 
-[%build]
+[.source.s67x16]
+== !As Coroutine
+
+[.build]
 --
 [source.lang-cpp%nested, cpp]
 ----
-auto tokenize(Generator<CodePoint> &input) -> Generator<Token> {
+auto tokenize(Generator<CodePoint> input) -> Generator<Token> {
   // nest++
   auto position = TextPosition{};
   // nest--
@@ -673,12 +764,12 @@ auto tokenize(Generator<CodePoint> &input) -> Generator<Token> {
 ----
 --
 
-== Zusammenfassung
+== Summary
 
 [%fit%build]
-* Andere Denkweise
-* Clean Code
-* Performance?
+* "a new way of thinking"
+* Clean Code™
+* … Performance?
 
 [.subtitle]
 == Performance
@@ -687,9 +778,15 @@ auto tokenize(Generator<CodePoint> &input) -> Generator<Token> {
 
 [%build]
 * clang
-* `-std=c++2a -O3`
+* `-std=c++17 -pedantic`
 * `-stdlib=libc++ -fcoroutines-ts`
-* link:https://godbolt.org[Compiler Explorer]
+* `-O3`
+
+[.small]
+&nbsp;
+
+[.build]
+link:https://godbolt.org[Compiler Explorer]
 
 [.source]
 == !
@@ -793,13 +890,13 @@ dynSum(unsigned long):            ; rdi = n
         ret                       ; return eax
 ----
 
-== Resultat
+== Results
 
 [%build]
 * link:https://godbolt.org/g/W8XZtN[Godbolt Link]
 * use [language-cpp]#`noexcept`#
-* Klappt nicht perfekt
-* Wird besser!
+* does not always work
+* should get better!
 
 [.subtitle]
 == [language-cpp]#`co_yield`# expression
@@ -854,28 +951,28 @@ include::{codedir}/coyield/main.cpp[tag=awaitable]
 
 [.cue]
 ****
-* speichert den aktuellen input
-* `await_ready` wir wollen warten
-* `await_resume` gibt den letzten Input aus
-* `await_suspend` muss nix machen
+* stores last input
+* `await_ready` - we wait
+* `await_resume` - return last input
+* `await_suspend` - nothing to do
 ****
 
 [.subtitle]
-== Zusammenfassung
+== Summary
 
-== Vorteile
-
-[%build]
-* State Machine einer Funktion
-* Bessere Lokalität
-* Funktionale Denkweise
-
-== Nachteile
+== Advantages
 
 [%build]
-* Neu!
-* Batteries not included!
-* Noch nicht im C++ Standard
+* state machine in one function
+* better locality of logic
+* functional thinking
+
+== Disadvantages
+
+[%build]
+* New
+* Batteries not included
+* Still only TS
 
 == Links
 
@@ -893,14 +990,13 @@ image::andreas.png[role="center", width="400"]
 * Andreas Reischuck
 * @*arBmind*
 
-
 == !
 
 image::hicknhackLogo_new_text.png[role="center", width="400"]
 
 &nbsp;
 
-[.green]_Arbeitet_ mit uns…
+[.green]_Work_ with us…
 
 [.cue]
 ****
@@ -914,14 +1010,14 @@ image::cppug.png[role="pull-right", width="550"]
 
 &nbsp;
 
-[.green]*Vorträge* halten +
-& *Dresden* Tour
+Give a [.green]*Talk* +
+& get a *Dresden* tour
 
 [.cue]
 ****
 * Video Recording
-* persönhiche Stadtführung
-* Ich komme im Gegenzug auch gerne zu euch!
+* personal city tour
+* I visit your local usergroup
 ****
 
 == !
@@ -934,17 +1030,17 @@ image::rebuild_logo.png[role="pull-left", width="450"]
 &nbsp;
 
 [.center]
-[.green]__Mitmachen__
+[.green]__Collaborate__
 
 [.cue]
 ****
-* bessere Sprachen & Tools für alle
+* improved language & tools for everybody
 * Compiler built with C++17
 ****
 
-== Probiert *mehr* aus!
+== Play with *more* features!
 
-== Probiert *Co-Routinen* aus!
+== Play with *Coroutine*!
 
 == Photo Credits
 
@@ -957,4 +1053,4 @@ Brown Wood Working Machine Co., St. Louis, MO] link:https://creativecommons.org/
 [.subtitle]
 == Danke!
 
-Noch Fragen?
+[language-cpp]#`co_await question_ready()`#

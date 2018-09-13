@@ -8,8 +8,8 @@ struct Generator {
 
     template<class G>
     Generator(G &&g)
-        : p(std::make_unique<Impl<G>>(std::forward<G>(g))) {
-    }
+        : p(std::make_unique<Impl<std::remove_cv_t<G>>>(
+              std::forward<G>(g))) {}
 
     operator bool() const { return p->hasNext(); }
     auto next() -> T { return p->next(); }
@@ -39,8 +39,12 @@ struct Generator {
                     gen = nullptr;
                 return *this;
             }
-            bool operator==(End) const noexcept { return !gen; }
-            bool operator!=(End) const noexcept { return gen; }
+            bool operator==(End) const noexcept {
+                return !gen;
+            }
+            bool operator!=(End) const noexcept {
+                return gen;
+            }
         };
         if (*this) return Iterator{this, next()};
         return Iterator{};

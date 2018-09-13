@@ -99,5 +99,5 @@ struct Token {
     TokenVariant kind;
 };
 
-auto scan(const FileContent &, Generator<FileChar> &)
+auto scan(const FileContent &, Generator<FileChar>)
     -> Generator<Token>;

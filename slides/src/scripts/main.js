@@ -41,7 +41,7 @@ bespoke.from({ parent: 'article.deck', slides: 'section' }, [
   bullets('.build, .build-items > *:not(.build-items)'),
   hash(),
   progress(),
-  title({ "title": "CoRoutinen als Generatoren" }),
+  title(),
   prismjs(),
   onstage(),
   slidenumber('/'),

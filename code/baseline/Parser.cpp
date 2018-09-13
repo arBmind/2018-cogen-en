@@ -66,10 +66,10 @@ auto utf8Decode(MemoryView data) -> Generator<FileChar> {
 #define TAB_WIDTH 4u
 
 auto scan(const FileContent &file,
-          Generator<FileChar> &&input) -> Generator<Token> {
+          Generator<FileChar> input) -> Generator<Token> {
     struct Scanner {
         Scanner(const FileContent &file_,
-                Generator<FileChar> &&input_)
+                Generator<FileChar> input_)
             : file(file_)
             , input(std::move(input_)) {
             if (input) fc = input.next();
