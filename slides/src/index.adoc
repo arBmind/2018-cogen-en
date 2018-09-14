@@ -98,7 +98,8 @@ image::coroutine.png[width="415"]
 == [language-cpp]#`co_await`#
 
 [%build]
-* conditional suspension
+* [language-cpp]#`operator co_await() \-> awaitable`#
+* customizable condition
 * no result
 
 [.cue]
@@ -135,7 +136,7 @@ image::mcnellis_cppcon2016.png[width="1024"]
 == Generators ?
 
 [%build]
-* next result on demand
+* produce next result on demand
 
 [.cue]
 ****
@@ -296,10 +297,13 @@ image::Antique_Molder.jpg[width="1920"]
 [.source]
 == !
 
+[.build]
+--
 [source.lang-cpp%nested, cpp]
 ----
 include::{codedir}/cogen/main.cpp[tag=23_42]
 ----
+--
 
 [.cue]
 ****
@@ -767,6 +771,190 @@ auto tokenize(Generator<CodePoint> input) -> Generator<Token> {
 == Summary
 
 [%fit%build]
+* perfect fit for Genators
+
+[.subtitle]
+== State Machines
+
+== [language-cpp]#`co_yield`# expression
+
+== N4736
+
+""
+… the yield-expression is equivalent to the expression 
+[language-cpp]#`co_await p.yield_value(e)`#.
+""
+
+[.source]
+== !
+
+[source.lang-cpp%nested, cpp]
+----
+auto repeater(int v) -> CoYield<int, int> {
+  // nest++
+  while (true) {
+    // nest++
+    v = co_yield v;
+    // nest--
+  }
+  // nest--
+}
+----
+
+[.source]
+== !Promise Yield
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/coyield/main.cpp[tag=promise]
+  // …
+include::{codedir}/coyield/main.cpp[tag=yield]
+};
+----
+--
+
+[.source]
+== !Awaitable
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/coyield/main.cpp[tag=awaitable]
+----
+--
+
+[.cue]
+****
+* stores last input
+* `await_ready` - we wait
+* `await_resume` - return last input
+* `await_suspend` - nothing to do
+****
+
+
+== State Machine Example
+
+== Elevator
+
+image::statemachine.png[width="1024"]
+
+== Elevator
+
+image::statemachine_with_broken.png[width="1024"]
+
+== States
+
+[source.lang-cpp%nested, cpp]
+----
+// nest++
+struct Idle {};
+// nest--
+// nest++
+enum class Move { Up, Down };
+// nest--
+// nest++
+struct Broken {};
+// nest--
+
+// nest++
+using State = std::variant<Idle, Move, Broken>;
+// nest--
+----
+
+== Events
+
+[source.lang-cpp%nested, cpp]
+----
+// nest++
+struct Called { int toFloor; };
+// nest--
+// nest++
+struct FloorSensor { int floor; };
+// nest--
+// nest++
+struct AlarmPressed {};
+// nest--
+
+// nest++
+using Event = 
+  std::variant<Called, FloorSensor, AlarmPressed>;
+// nest--
+----
+
+== Create the state machine
+
+== !
+
+[source.lang-cpp%nested, cpp]
+----
+// nest++
+inline auto create() -> StateMachine<Event, State> {
+    // nest++
+    int current = 0;
+    // nest--
+    // nest++
+    int target{};
+    // nest--
+    // nest++
+    State state = Idle{};
+    // nest--
+    // nest++
+    while (true) {
+        // nest++
+        Event event = co_yield state;
+        // nest--
+        // nest++
+        // state x event => next_state
+        // nest--
+    }
+    // nest--
+}
+// nest--
+----
+
+[.source.s54x13]
+== !
+
+[source.lang-cpp%nested, cpp]
+----
+// nest++
+// state x event => next_state
+// nest--
+// nest++
+state = match(
+    pattern(state, event),
+    // nest--
+    // nest++
+    [](auto, AlarmPressed) -> State {
+        // nest++
+        return Broken{};
+        // nest--
+    },
+    // nest--
+    // nest++
+    [&](Idle, Called c) -> State {
+        // nest++
+        target = c.toFloor;
+        // nest--
+        // nest++
+        return c.toFloor < current ? Move::Down
+                                   : Move::Up;
+        // nest--
+    },
+    // nest--
+----
+
+== Summary
+
+[%build]
+* perfect for state machines
+
+== Coroutines
+
+[%build]
 * "a new way of thinking"
 * Clean Code™
 * … Performance?
@@ -797,9 +985,13 @@ link:https://godbolt.org[Compiler Explorer]
 ----
 template<size_t N>
 auto fixedSum() {
+    // nest++
     auto sum = 0u;
+    // nest++
     for (auto v : iota(N + 1)) sum += v;
+    // nest--
     return sum;
+    // nest--
 }
 
 // nest++
@@ -899,65 +1091,6 @@ dynSum(unsigned long):            ; rdi = n
 * should get better!
 
 [.subtitle]
-== [language-cpp]#`co_yield`# expression
-
-== N4736
-
-""
-… the yield-expression is equivalent to the expression 
-[language-cpp]#`co_await p.yield_value(e)`#.
-""
-
-[.source]
-== !
-
-[source.lang-cpp%nested, cpp]
-----
-auto repeater(int v) -> CoYield<int, int> {
-  // nest++
-  while (true) {
-    // nest++
-    v = co_yield v;
-    // nest--
-  }
-  // nest--
-}
-----
-
-[.source]
-== !Promise Yield
-
-[.build]
---
-[source.lang-cpp%nested, cpp]
-----
-include::{codedir}/coyield/main.cpp[tag=promise]
-  // …
-include::{codedir}/coyield/main.cpp[tag=yield]
-};
-----
---
-
-[.source]
-== !Awaitable
-
-[.build]
---
-[source.lang-cpp%nested, cpp]
-----
-include::{codedir}/coyield/main.cpp[tag=awaitable]
-----
---
-
-[.cue]
-****
-* stores last input
-* `await_ready` - we wait
-* `await_resume` - return last input
-* `await_suspend` - nothing to do
-****
-
-[.subtitle]
 == Summary
 
 == Advantages
@@ -1047,8 +1180,7 @@ image::rebuild_logo.png[role="pull-left", width="450"]
 [.small]
 * link:http://www.flickr.com/photos/50830796@N04/29859713915[trail graph of yielding] link:https://creativecommons.org/licenses/by-sa/2.0/[(cc-by-sa-license)]
 * link:https://www.flickr.com/photos/nikonvscanon/504339352[Awaiting Passengers] link:https://creativecommons.org/licenses/by/2.0/[(cc-by-license)]
-* link:https://www.flickr.com/photos/darronb/14061239268[Antique Molder - Hall &
-Brown Wood Working Machine Co., St. Louis, MO] link:https://creativecommons.org/licenses/by-sa/2.0/[(cc-by-sa-license)]
+* link:https://www.flickr.com/photos/darronb/14061239268[Antique Molder - Hall & Brown Wood Working Machine Co., St. Louis, MO] link:https://creativecommons.org/licenses/by-sa/2.0/[(cc-by-sa-license)]
 
 [.subtitle]
 == Danke!

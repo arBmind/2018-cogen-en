@@ -37,7 +37,6 @@ using Event =
 struct Idle {};
 struct Broken {};
 enum class Move { Up, Down };
-struct Stop {};
 
 using State = std::variant<Idle, Broken, Move>;
 

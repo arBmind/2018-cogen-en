@@ -160,6 +160,8 @@ void test_fun() {
 auto generate() -> Generator<long> {
   // nest++
   co_yield 23;
+  // nest--
+  // nest++
   co_yield 42;
   // nest--
 }
