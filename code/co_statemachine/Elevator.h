@@ -35,10 +35,10 @@ using Event =
     std::variant<Called, FloorSensor, AlarmPressed>;
 
 struct Idle {};
-struct Broken {};
 enum class Move { Up, Down };
+struct Broken {};
 
-using State = std::variant<Idle, Broken, Move>;
+using State = std::variant<Idle, Move, Broken>;
 
 inline auto create() -> StateMachine<Event, State> {
     int currentFloor = 0;
