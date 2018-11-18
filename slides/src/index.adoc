@@ -110,37 +110,10 @@ image::coroutine.png[width="415"]
 == !
 
 [%build]
-* async tasks
 * generators
 * state machines
+* async tasks
 * … *your imagination* …
-
-[.subtitle]
-== async tasks
-
-== !
-
-[%build]
-* non blocking IO
-* prevent callback hell
-* readable code
-
-== [language-cpp]#`co_await`#
-
-[%build]
-* [language-cpp]#`operator co_await() \-> awaitable`#
-* customizable condition
-* no result
-
-[.cue]
-****
-* wait for available data
-****
-
-== !
-
-image::Awaiting_Passengers.jpg[width="1024"]
-
 
 [.cue]
 ****
@@ -148,17 +121,6 @@ image::Awaiting_Passengers.jpg[width="1024"]
 * Please interrupt me!
 * let's go on…
 ****
-
-== !
-
-image::mcnellis_cppcon2016.png[width="1024"]
-
-[.small]
-&nbsp;
-
-[%build.small]
-* link:https://youtu.be/ZTqHjjm86Bw[James McNellis "Introduction to C++ Coroutines" @ CppCon 2016]
-* link:https://youtu.be/_fu0gx-xseY[Gor Nishanov "C++ Coroutines - a negative overhead abstraction" @ CppCon 2015]
 
 [.subtitle]
 == Generators
@@ -176,22 +138,6 @@ What is a generator?
 ****
 
 [.source]
-== !
-
-[.build]
---
-[source.lang-cpp%nested, cpp]
-----
-include::{codedir}/array/main.cpp[tag=slide]
-----
---
-
-[.cue]
-****
-* Generator? - not on demand
-****
-
-[.source]
 == Simple Coroutine
 
 [.small]
@@ -202,6 +148,19 @@ include::{codedir}/array/main.cpp[tag=slide]
 [source.lang-cpp%nested, cpp]
 ----
 include::{codedir}/cogen/main.cpp[tag=23_42]
+----
+--
+
+[.source.s54x13]
+== !Usage
+
+[%build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/cogen/main.cpp[tag=23_42_generate]
+include::{codedir}/cogen/main.cpp[tag=23_42_usage]
+}
 ----
 --
 
@@ -223,6 +182,38 @@ include::{codedir}/cogen/main.cpp[tag=iota]
 ****
 * all integer numbers between 0 and n-1
 ****
+
+[.source]
+== Iota Usage
+
+[.small]
+&nbsp;
+
+[.build.build-items]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/cogen/main.cpp[tag=test_iota_head]
+include::{codedir}/cogen/main.cpp[tag=test_iota_body]
+----
+--
+
+[.build.small]
+--
+----
+0
+1
+2
+3
+4
+----
+--
+
+[.cue]
+****
+* never write a raw loop again
+****
+
 
 [.source]
 == Endless
@@ -250,69 +241,6 @@ include::{codedir}/cogen/main.cpp[tag=from]
 * New …
 ****
 
-== Without Coroutine
-
-[.source]
-== !From Generator
-
-[.build]
---
-[source.lang-cpp%nested, cpp]
-----
-include::{codedir}/from_gen/main.cpp[tag=gen]
-----
---
-
-[.cue]
-****
-* C++17 allows different iterator types here
-****
-
-[.source]
-== !From Iter
-
-[.build]
---
-[source.lang-cpp%nested, cpp]
-----
-include::{codedir}/from_gen/main.cpp[tag=iter]
-----
---
-
-[.cue]
-****
-* Eigentliche Logik
-* Zustand
-* Minimale Implementierung
-****
-
-== Summary
-
-[%fit%build]
-* [language-cpp]#`begin()`# & [language-cpp]#`end()`#
-* input iterator implementation
-* manage internal state
-
-[.cue]
-****
-* `begin()` and `end()`
-* input range
-* state has to be managed
-****
-
-== Issues ?
-
-[%fit%build]
-* hidden logic
-* state
-* state machine
-
-[.cue]
-****
-* … not feasable for complex problems
-* hard to optimize
-****
-
 == !Reasons
 
 image::Antique_Molder.jpg[width="1920"]
@@ -324,6 +252,7 @@ image::Antique_Molder.jpg[width="1920"]
 * generalized generator implementation
 ****
 
+////
 [.source]
 == !
 
@@ -376,26 +305,7 @@ struct Generate {
 --
 
 [.subtitle]
-== How does [language-cpp]#`co_yield`# actually work?
-
-[.source]
-== !Coroutine Trait
-
-[.build]
---
-[source.lang-cpp%nested, cpp]
-----
-include::{codedir}/cogen/main.cpp[tag=trait]
-----
---
-
-[.cue]
-****
-* overload coroutine_traits with result and argument types
-* promise_type
-
-… let's look into the promise type
-****
+== How to get it running?
 
 [.source]
 == !Coroutine includes
@@ -489,6 +399,7 @@ last three
 ----
 include::{codedir}/cogen/main.cpp[tag=generator]
 include::{codedir}/cogen/main.cpp[tag=lifecycle]
+  // …
 };
 ----
 --
@@ -500,29 +411,46 @@ Coroutine handle contains state and promise
 ****
 
 [.source]
-== !Generator Work
+== !Generator Read
 
 [.build]
 --
 [source.lang-cpp%nested, cpp]
 ----
 include::{codedir}/cogen/main.cpp[tag=generator]
-include::{codedir}/cogen/main.cpp[tag=work]
+  // …
+include::{codedir}/cogen/main.cpp[tag=read]
+include::{codedir}/cogen/main.cpp[tag=resume]
+  // …
+};
+----
+--
+
+[.source.s54x13]
+== !Generator Iterators
+
+[.build]
+--
+[source.lang-cpp%nested, cpp]
+----
+include::{codedir}/cogen/main.cpp[tag=generator]
+  // …
+include::{codedir}/cogen/main.cpp[tag=iterator]
+};
 ----
 --
 
 [.cue]
 ****
-* implement basic input iterator
-* you may want to add begin() & end() implementation
+* mtntmu begin() & end() implementation
 ****
 
 == Summary
 
 [%fit%build]
-* [language-cpp]#`coroutine_traits<Ret, Args\...>`#
 * [language-cpp]#`promise_type`#
-* [language-cpp]#`coroutine_handle<Promise>`#
+* [language-cpp]#`coroutine_handle<promise_type>`#
+* Input Iterator
 
 [.cue]
 ****
@@ -530,13 +458,14 @@ include::{codedir}/cogen/main.cpp[tag=work]
 * `promise_type` controls behavior and storage with 6 callbacks
 * `coroutine_handle` and custom API
 ****
+////
 
 [.subtitle]
-== Real World Comparison
+== Real World Use Case
 
 == Test Scenario:
 
-Write a parser for Python code!
+Write a parser for source code!
 
 == Design
 
@@ -568,51 +497,6 @@ auto utf8Decode(MemoryView)
 * Is that a Coroutine?
 ****
 
-== Without Coroutine
-
-[.cue]
-****
-* We use all available C++17 tricks
-****
-
-[.source]
-== !Without Coroutinen
-
-[.build]
---
-[source.lang-cpp%nested, cpp]
-----
-auto utf8Decode(MemoryView view)
-    -> Generator<CodePoint> {
-  // nest++
-  struct Decoder {
-    // nest++
-    MemoryView view;
-    // nest--
-    // nest++
-    operator bool() const noexcept {
-      // nest++
-      return !view.empty();
-      // nest--
-    }
-    // nest--
-    // nest++
-    auto next() -> Codepoint { /*…*/ }
-    // nest--
-  };
-  return Decoder{view};
-  // nest--
-}
-----
---
-
-[.cue]
-****
-* local Decoder struct
-* converted to generic Generator API
-* only two functions…
-****
-
 [.source]
 == With Coroutine
 
@@ -628,10 +512,7 @@ auto utf8Decode(MemoryView view)
     /* … */
     // nest--
     // nest++
-    co_yield /* … */;
-    // nest--
-    // nest++
-    continue;
+    co_yield CodePoint{/* … */};
     // nest--
   }
   // nest--
@@ -685,7 +566,7 @@ auto utf8Decode(MemoryView view) -> Generator<CodePoint> {
     }
     // nest--
     // nest++
-    else { /* … */ }
+    else { /* same for 3 & 4 bytes */ }
     // nest--
   }
   // nest--
@@ -803,8 +684,15 @@ auto tokenize(Generator<CodePoint> input) -> Generator<Token> {
 [%fit%build]
 * perfect fit for Genators
 
+== !
+
+[.build]
+* [.green]#✔# generators
+
 [.subtitle]
 == State Machines
+
+////
 
 == [language-cpp]#`co_yield`# expression
 
@@ -864,8 +752,7 @@ include::{codedir}/coyield/main.cpp[tag=awaitable]
 * `await_suspend` - nothing to do
 ****
 
-
-== State Machine Example
+////
 
 == Elevator
 
@@ -916,6 +803,7 @@ using Event =
 
 == Create the state machine
 
+[.source]
 == !
 
 [source.lang-cpp%nested, cpp]
@@ -937,7 +825,7 @@ inline auto create() -> StateMachine<Event, State> {
         Event event = co_yield state;
         // nest--
         // nest++
-        // state x event => next_state
+        // state * event => next_state
         // nest--
     }
     // nest--
@@ -945,18 +833,19 @@ inline auto create() -> StateMachine<Event, State> {
 // nest--
 ----
 
+== [language-cpp]#`co_yield`# expression
+
 [.source.s54x13]
 == !
 
 [source.lang-cpp%nested, cpp]
 ----
 // nest++
-// state x event => next_state
+// state * event => next_state
 // nest--
 // nest++
-state = match(
-    pattern(state, event),
-    // nest--
+auto matchers = overloaded{
+// nest++
     // nest++
     [](auto, AlarmPressed) -> State {
         // nest++
@@ -973,14 +862,67 @@ state = match(
         return c.toFloor < current ? Move::Down
                                    : Move::Up;
         // nest--
-    },
-    // nest--
+    }
+// nest--
+};
+state = std::visit(matchers, state, event);
+// nest--
 ----
 
 == Summary
 
 [%build]
 * perfect for state machines
+
+== !
+
+[.build]
+* [.green]#✔# generators
+* [.green]#✔# state machines
+
+[.subtitle]
+== async tasks
+
+== !
+
+[%build]
+* non blocking IO
+* prevent callback hell
+* readable code
+
+== [language-cpp]#`co_await`#
+
+[%build]
+* [language-cpp]#`operator co_await() \-> awaitable`#
+* customizable condition
+* no result
+
+[.cue]
+****
+* wait for available data
+****
+
+== !
+
+image::mcnellis_cppcon2016.png[width="1024"]
+
+[.small]
+&nbsp;
+
+[%build.small]
+* link:https://youtu.be/ZTqHjjm86Bw[James McNellis "Introduction to C++ Coroutines" @ CppCon 2016]
+* link:https://youtu.be/_fu0gx-xseY[Gor Nishanov "C++ Coroutines - a negative overhead abstraction" @ CppCon 2015]
+
+== !
+
+image::Awaiting_Passengers.jpg[width="1024"]
+
+== !
+
+[.build]
+* [.green]#✔# generators
+* [.green]#✔# state machines
+* [.green]#✔# async tasks
 
 == Coroutines
 
@@ -1038,8 +980,8 @@ auto fixedTest() {
 [source.lang-nasm, nasm]
 ----
 fixedTest():
-        mov     eax, 5050
-        ret
+        mov     eax, 5050         ; eax = 5050
+        ret                       ; return eax
 ----
 
 [.source]
@@ -1122,6 +1064,14 @@ dynSum(unsigned long):            ; rdi = n
 
 [.subtitle]
 == Summary
+
+== !
+
+[.build]
+* [.green]#✔# generators
+* [.green]#✔# state machines
+* [.green]#✔# async tasks
+* [.green]#✔# performance
 
 == Advantages
 
@@ -1213,6 +1163,6 @@ image::rebuild_logo.png[role="pull-left", width="450"]
 * link:https://www.flickr.com/photos/darronb/14061239268[Antique Molder - Hall & Brown Wood Working Machine Co., St. Louis, MO] link:https://creativecommons.org/licenses/by-sa/2.0/[(cc-by-sa-license)]
 
 [.subtitle]
-== Danke!
+== !Danke!
 
 [language-cpp]#`co_await question_ready()`#
