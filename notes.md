@@ -79,3 +79,10 @@ Scanner
 
 Error handling
 
+///// remarks
+
+-- complex examples
+
+// switch context (hard to follow)
+
+++ mark generated code
