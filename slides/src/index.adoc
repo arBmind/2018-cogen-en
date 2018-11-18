@@ -1,7 +1,6 @@
 = Coroutine TS: A new way of thinking
-:title: Coroutine TS: A new way of thinking
 :author: Andreas Reischuck
-:!twitter: @arBmind
+:twitter: @arBmind
 :!avatar: andreas.png
 :!organization: HicknHack Software GmbH
 :!sectids:
@@ -12,7 +11,7 @@
 :codedir: code
 :data-uri!:
 
-*C++ Usergroup Dresden*
+*Meeting C++ 2018*
 
 [.cue]
 ****
