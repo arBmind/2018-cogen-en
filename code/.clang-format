@@ -2,8 +2,8 @@
 Language: Cpp
 BasedOnStyle: LLVM
 ColumnLimit: 60
-IndentWidth: 4
-AccessModifierOffset: -4
+IndentWidth: 2
+AccessModifierOffset: -2
 
 AllowShortIfStatementsOnASingleLine: true
 AllowShortLoopsOnASingleLine: true
