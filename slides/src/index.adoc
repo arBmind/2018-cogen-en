@@ -30,12 +30,20 @@ image::herb_wasnotadopted.png[role="overlay center build", width="1428"]
 
 [%build]
 * Who read about it?
+
+[.cue]
+****
+Ask audience
+****
+
+== C++17 Coroutine-TS
+
+[.build]
 * Who tried it?
 
 [.cue]
 ****
 Ask audience
-
 * Gor Nishanov (Microsoft)
 * ISO/IEC TS 22277:2017 ?
 * TS Draft N4680
