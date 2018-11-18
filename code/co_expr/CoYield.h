@@ -4,9 +4,9 @@ namespace coro = std::experimental;
 
 template<class Out, class In>
 struct CoYield {
-    struct Promise;
-    using promise_type = Promise;
-    using Handle = coro::coroutine_handle<Promise>;
+    struct promise_type;
+    using promise_type = promise_type;
+    using Handle = coro::coroutine_handle<promise_type>;
 
     struct Awaitable {
         In in;
@@ -21,7 +21,7 @@ struct CoYield {
         void await_suspend(const Handle &) noexcept {}
     };
 
-    struct Promise {
+    struct promise_type {
         Out out;
         Awaitable awaitable;
 

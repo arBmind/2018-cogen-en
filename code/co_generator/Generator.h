@@ -5,10 +5,10 @@ namespace coro = std::experimental;
 template<class T>
 struct Generator {
     using element_type = T;
-    struct Promise;
-    using Handle = coro::coroutine_handle<Promise>;
+    struct promise_type;
+    using Handle = coro::coroutine_handle<promise_type>;
 
-    struct Promise {
+    struct promise_type {
         T current_m;
 
         auto get_return_object() noexcept {
@@ -104,7 +104,7 @@ namespace std::experimental {
 
 template<class T, class... Vs>
 struct coroutine_traits<Generator<T>, Vs...> {
-    using promise_type = typename Generator<T>::Promise;
+    using promise_type = typename Generator<T>::promise_type;
 };
 
 } // namespace std::experimental
