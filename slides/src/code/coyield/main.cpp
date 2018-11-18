@@ -9,9 +9,8 @@ template<class Out, class In>
 struct CoYield {
   // end::coyield[]
   struct Awaitable;
-  struct Promise;
-  using promise_type = Promise;
-  using H = coro::coroutine_handle<Promise>;
+  struct promise_type;
+  using H = coro::coroutine_handle<promise_type>;
   H h;
 
   CoYield() = delete;
@@ -33,21 +32,23 @@ struct CoYield {
     return h.promise().out;
   }
 
+  // tag::resume[]
   void resume(In in) noexcept {
     if (!h) return;
     if (h.done()) return;
     h.promise().awaitable.in = std::move(in);
     h.resume();
   }
+  // end::resume[]
 
 private:
-  CoYield(Promise &p)
+  CoYield(promise_type &p)
       : h(H::from_promise(p)) {}
 };
 
 // tag::promise[]
 template<class Out, class In>
-struct CoYield<Out, In>::Promise {
+struct CoYield<Out, In>::promise_type {
   // end::promise[]
   // tag::suspend[]
   // nest++

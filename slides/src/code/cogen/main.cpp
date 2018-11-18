@@ -22,20 +22,22 @@ struct Generator {
   /* clang forces constructors on multiple lines
    * therefore it is disabled here:
    */
+  // nest++
+  struct promise_type;
+  // nest--
+  Generator() = delete;
   // clang-format off
   // tag::lifecycle[]
   // nest++
-  struct Promise;
-  // nest--
-  // nest++
-  using H = coro::coroutine_handle<Promise>;
+  using H = coro::coroutine_handle<promise_type>;
   // nest--
   // nest++
   H h;
   // nest--
 
   // nest++
-  Generator(Promise &p) : h(H::from_promise(p)) {}
+  Generator(promise_type &p)
+      : h(H::from_promise(p)) {}
   // nest--
   // nest++
   ~Generator() { if (h) h.destroy(); }
@@ -51,9 +53,9 @@ struct Generator {
   Generator &operator=(const Generator &) = delete;
   Generator &operator=(Generator &&) = delete;
 
-  // tag::work[]
+  // tag::read[]
   // nest++
-  operator bool() const { return h && !h.done(); }
+  operator bool() const { return !h.done(); }
   // nest--
   // nest++
   auto operator*() const -> const T & {
@@ -62,22 +64,47 @@ struct Generator {
     // nest--
   }
   // nest--
+  // end::read[]
+  // tag::resume[]
   // nest++
   auto operator++() -> Generator & {
     // nest++
-    if (h) h.resume();
-    // nest--
-    // nest++
+    h.resume();
     return *this;
     // nest--
   }
   // nest--
+  // end::resume[]
+
+  // tag::iterator[]
+  // nest++
+  struct End {};
+  auto end() -> End { return {}; }
+  // nest--
+
+  // nest++
+  struct Begin {
+    Generator &g;
+    // nest++
+    bool operator!=(End) const { return g; }
+    // nest--
+    // nest++
+    auto operator*() const -> const T & {
+      return *g;
+    }
+    // nest--
+    // nest++
+    void operator++() { ++g; }
+    // nest--
+  };
+  auto begin() -> Begin { return {++*this}; }
+  // nest--
+  // end::iterator[]
 };
-// end::work[]
 
 // tag::promise[]
 template<class T>
-struct Generator<T>::Promise {
+struct Generator<T>::promise_type {
   // end::promise[]
   // tag::suspend[]
   // nest++
@@ -121,6 +148,7 @@ struct Generator<T>::Promise {
   // end::return[]
 };
 
+/*
 // tag::trait[]
 // nest++
 namespace std::experimental {
@@ -138,6 +166,7 @@ struct coroutine_traits<Generator<T>, Vs...> {
 } // namespace std::experimental
 // nest--
 // end::trait[]
+*/
 
 // tag::fun[]
 auto fun() -> Generator<long> {
@@ -167,17 +196,45 @@ auto generate() -> Generator<long> {
 }
 // end::23_42[]
 
+// tag::23_42_generate[]
 void test_generate() {
+  // nest++
   auto f = generate();
+  // nest--
+  // end::23_42_generate[]
+  using std::cout;
   std::cout << std::boolalpha
             << "-- test_generate()\n";
-  std::cout << static_cast<bool>(f) << '\n';
+  // clang-format off
+  // tag::23_42_usage[]
+  // nest++
+  cout << static_cast<bool>(f) << '\n'; // true
+  // nest--
+  // nest++
   ++f;
-  std::cout << *f << '\n';
-  std::cout << static_cast<bool>(f) << '\n';
+  // nest--
+  // nest++
+  cout << static_cast<bool>(f) << '\n'; // true
+  // nest--
+  // nest++
+  cout << *f << '\n';                   // 23
+  // nest--
+  // nest++
   ++f;
-  std::cout << *f << '\n';
-  std::cout << static_cast<bool>(f) << '\n';
+  // nest--
+  // nest++
+  cout << static_cast<bool>(f) << '\n'; // true
+  // nest--
+  // nest++
+  cout << *f << '\n';                   // 42
+  // nest--
+  // nest++
+  ++f;
+  // nest--
+  // nest++
+  cout << static_cast<bool>(f) << '\n'; // false
+  // nest--
+  // end::23_42_usage[]
 }
 
 // tag::iota[]
@@ -192,13 +249,20 @@ auto iota(long n) -> Generator<long> {
 }
 // end::iota[]
 
+// tag::test_iota_head[]
 void test_iota() {
-  auto f = iota(5);
+  // end::test_iota_head[]
   std::cout << "-- test_iota()\n";
-  while (++f) {
-    std::cout << *f << '\n';
+  // tag::test_iota_body[]
+  // nest++
+  for (auto i : iota(5)) {
+    // nest++
+    std::cout << i << '\n';
+    // nest--
   }
+  // nest--
 }
+// end::test_iota_body[]
 
 // tag::from[]
 auto from(long n) -> Generator<long> {
