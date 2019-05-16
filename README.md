@@ -4,7 +4,7 @@ Presentation at Meeting C++ (15.-17. August 2018)
 
 ## Video
 
-The presentation was recorded, but not yet published.
+[Youtube](https://www.youtube.com/watch?v=RL5oYUl5548)
 
 ## Tech
 
